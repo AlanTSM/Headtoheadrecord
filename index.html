@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<title>Cara a cara TSM · Historial de enfrentamientos</title>
+<style>
+:root{--bg:#0b1220;--card:#121a2b;--card2:#18223a;--line:#24304d;--tx:#e8edf7;--mut:#93a0bb;--a:#3b82f6;--b:#f43f5e;--d:#a3a3a3;--acc:#22d3ee;--r:14px}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+header{padding:20px 16px 8px;max-width:1100px;margin:auto}
+h1{margin:0;font-size:clamp(1.4rem,4vw,2rem);letter-spacing:-.02em}
+h1 span{color:var(--acc)}
+.sub{color:var(--mut);margin:4px 0 0;font-size:.95rem}
+main{max-width:1100px;margin:auto;padding:8px 16px 40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-top:14px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--tx);font-size:.95rem;cursor:pointer}
+.tab[aria-pressed=true]{background:var(--acc);color:#05202a;border-color:var(--acc);font-weight:600}
+.pick{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:end;margin-top:14px}
+.vs{font-weight:800;color:var(--mut);padding-bottom:12px;text-align:center}
+label{display:block;font-size:.8rem;color:var(--mut);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em}
+.combo{position:relative}
+.combo input{width:100%;min-height:48px;padding:0 44px 0 14px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--tx);font-size:16px}
+.combo input:focus,select:focus,.tab:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.combo.a input{border-left:4px solid var(--a)}.combo.b input{border-left:4px solid var(--b)}
+.clr{position:absolute;right:2px;top:2px;width:44px;height:44px;border:0;background:none;color:var(--mut);font-size:1.3rem;cursor:pointer}
+.list{position:absolute;z-index:20;left:0;right:0;top:calc(100% + 4px);max-height:min(55vh,360px);overflow:auto;background:#0f1726;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 30px #0008;display:none;-webkit-overflow-scrolling:touch}
+.list.open{display:block}
+.opt{min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 14px;cursor:pointer;border-bottom:1px solid #1b2540}
+.opt small{color:var(--mut)}
+.opt.hl,.opt:hover{background:var(--card2)}
+.swap{min-height:44px;min-width:44px;border-radius:50%;border:1px solid var(--line);background:var(--card2);color:var(--tx);font-size:1.1rem;cursor:pointer}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin-top:14px}
+select{width:100%;min-height:48px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:var(--card2);color:var(--tx);font-size:16px}
+.empty{color:var(--mut);text-align:center;padding:28px 8px}
+.sum{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center}
+.team{font-weight:700;font-size:clamp(1rem,3.2vw,1.35rem);word-break:break-word}
+.team.a{color:#93c5fd}.team.b{color:#fda4af;text-align:right}
+.played{text-align:center;color:var(--mut);font-size:.85rem}
+.played b{display:block;font-size:2rem;color:var(--tx);line-height:1}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.st{background:var(--card2);border-radius:12px;padding:12px;text-align:center}
+.st b{display:block;font-size:1.7rem;line-height:1.1}
+.st span{color:var(--mut);font-size:.8rem}
+.st.a b{color:var(--a)}.st.b b{color:var(--b)}.st.d b{color:var(--d)}
+.bar{display:flex;height:10px;border-radius:99px;overflow:hidden;margin-top:14px;background:var(--line)}
+.bar i{display:block}
+.goals{display:flex;justify-content:space-between;color:var(--mut);margin-top:10px;font-size:.9rem;flex-wrap:wrap;gap:6px}
+.goals b{color:var(--tx)}
+.season{margin-top:18px}
+.season h3{margin:0 0 8px;font-size:.85rem;color:var(--acc);letter-spacing:.08em}
+.m{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--card2);margin-bottom:8px;border-left:4px solid var(--d)}
+.m.wa{border-left-color:var(--a)}.m.wb{border-left-color:var(--b)}
+.m .h{text-align:right}.m .w{font-weight:700}
+.sc{font-weight:800;font-variant-numeric:tabular-nums;background:#0b1220;padding:4px 10px;border-radius:8px;white-space:nowrap}
+.meta{grid-column:1/-1;color:var(--mut);font-size:.82rem;display:flex;flex-wrap:wrap;gap:6px 10px}
+.tag{background:#2a2140;color:#d8b4fe;padding:1px 8px;border-radius:99px}
+.tag.s{background:#3b1d24;color:#fda4af}.tag.p{background:#132f3a;color:#67e8f9}
+footer{color:var(--mut);font-size:.8rem;max-width:1100px;margin:auto;padding:0 16px 30px}
+footer a{color:var(--acc)}
+.load{color:var(--mut)}
+@media (max-width:640px){
+ .pick{grid-template-columns:1fr;gap:8px}.vs{display:none}
+ .swapw{display:flex;justify-content:center}
+ .filters{grid-template-columns:1fr 1fr}.filters .fc{grid-column:1/-1}
+ .stats{gap:6px}.st{padding:10px 4px}
+ .m{grid-template-columns:1fr auto 1fr;padding:10px 8px;font-size:.92rem}
+}
+</style>
+</head>
+<body>
+<header>
+ <h1>Cara a cara <span>TSM</span></h1>
+ <p class="sub">Historial de enfrentamientos oficiales · Temporadas T1–T37</p>
+</header>
+<main>
+ <section class="card">
+  <div class="tabs" role="group" aria-label="Categoría" id="tabs"></div>
+  <div class="pick">
+   <div><label for="ia">Equipo 1</label><div class="combo a" id="ca"><input id="ia" autocomplete="off" placeholder="Buscar equipo…" role="combobox" aria-expanded="false"><button class="clr" aria-label="Borrar" data-c="a">×</button><div class="list" role="listbox"></div></div></div>
+   <div class="swapw"><button class="swap" id="swap" aria-label="Intercambiar equipos" title="Intercambiar">⇄</button></div>
+   <div><label for="ib">Equipo 2</label><div class="combo b" id="cb"><input id="ib" autocomplete="off" placeholder="Buscar rival…" role="combobox" aria-expanded="false"><button class="clr" aria-label="Borrar" data-c="b">×</button><div class="list" role="listbox"></div></div></div>
+  </div>
+  <div class="filters">
+   <div class="fc"><label for="fcomp">Competición</label><select id="fcomp"></select></div>
+   <div><label for="ffrom">Desde</label><select id="ffrom"></select></div>
+   <div><label for="fto">Hasta</label><select id="fto"></select></div>
+  </div>
+ </section>
+ <section class="card" id="out"><p class="empty load">Cargando base de datos…</p></section>
+</main>
+<footer>Datos: <a href="https://alantsm.github.io/Headtoheadrecorddb/results.txt">Headtoheadrecorddb</a>. Amistosos excluidos. Victoria/derrota según el resultado oficial: las sanciones por táctica T (3-0, solo desde T25; sin sanción si ambos usaron táctica T) cuentan para el ganador; los goles mostrados son los del partido jugado. Las eliminatorias decididas por penaltis cuentan como empate (se indica el resultado de la tanda).</footer>
+<script>
+const DB='https://alantsm.github.io/Headtoheadrecorddb/results.txt';
+const CATS=[['CLUBES','Clubes'],['SELECCIONES','Selecciones'],['FILIALES','Filiales'],['FEMENINO','Femenino']];
+let data={},cat='CLUBES',sel={a:'',b:''};
+const $=s=>document.querySelector(s);
+function parseLine(l){const o=[];let c='',q=false;for(let i=0;i<l.length;i++){const ch=l[i];if(q){if(ch=='"'){if(l[i+1]=='"'){c+='"';i++}else q=false}else c+=ch}else if(ch=='"')q=true;else if(ch==','){o.push(c);c=''}else c+=ch}o.push(c);return o}
+function parse(t){let sec=null;for(const l of t.split('\n')){if(!l||l[0]=='#'&&l[1]!='#')continue;if(l.startsWith('## ')){sec=l.slice(3).split(' (')[0];data[sec]={rows:[],teams:new Map()};continue}if(!sec||l.startsWith('Temporada,'))continue;const f=parseLine(l);if(f.length<7)continue;const r={s:+f[0].slice(1),c:f[1],r:f[2],h:f[3],hg:+f[4],ag:+f[5],a:f[6],n:f[7]||''};const sx=r.n.match(/oficial (\d+)-(\d+)/);r.oh=sx?+sx[1]:r.hg;r.oa=sx?+sx[2]:r.ag;data[sec].rows.push(r);for(const t of[r.h,r.a])data[sec].teams.set(t,(data[sec].teams.get(t)||0)+1)}}
+const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function tabs(){$('#tabs').innerHTML=CATS.filter(c=>data[c[0]]).map(([k,n])=>`<button class="tab" aria-pressed="${k==cat}" data-k="${k}">${n} <small>(${data[k].teams.size})</small></button>`).join('');}
+$('#tabs').onclick=e=>{const b=e.target.closest('.tab');if(!b)return;cat=b.dataset.k;sel={a:'',b:''};$('#ia').value=$('#ib').value='';tabs();render()};
+function opponents(t){const m=new Map();for(const r of data[cat].rows){if(r.h==t)m.set(r.a,(m.get(r.a)||0)+1);else if(r.a==t)m.set(r.h,(m.get(r.h)||0)+1)}return m}
+function setupCombo(k){const box=$('#c'+k),inp=box.querySelector('input'),list=box.querySelector('.list');let hl=-1,items=[];
+ function show(){const other=sel[k=='a'?'b':'a'];const src=other?opponents(other):data[cat].teams;const q=norm(inp.value.trim());
+  items=[...src.entries()].filter(([t])=>t!=other&&(!q||norm(t).includes(q))).sort((x,y)=>q?(norm(x[0]).startsWith(q)?-1:0)-(norm(y[0]).startsWith(q)?-1:0)||x[0].localeCompare(y[0],'es'):x[0].localeCompare(y[0],'es')).slice(0,150);
+  list.innerHTML=items.length?items.map(([t,n],i)=>`<div class="opt${i==hl?' hl':''}" role="option" data-i="${i}"><span>${esc(t)}</span><small>${n} ${other?'vs':'PJ'}</small></div>`).join(''):'<div class="opt"><small>Sin resultados</small></div>';
+  list.classList.add('open');inp.setAttribute('aria-expanded','true')}
+ function pick(t){sel[k]=t;inp.value=t;close();render()}
+ function close(){list.classList.remove('open');inp.setAttribute('aria-expanded','false');hl=-1}
+ inp.addEventListener('focus',()=>{inp.select();show()});inp.addEventListener('input',()=>{hl=-1;show()});
+ inp.addEventListener('keydown',e=>{if(e.key=='ArrowDown'){hl=Math.min(hl+1,items.length-1);show();e.preventDefault()}else if(e.key=='ArrowUp'){hl=Math.max(hl-1,0);show();e.preventDefault()}else if(e.key=='Enter'){if(items[hl<0?0:hl])pick(items[hl<0?0:hl][0]);e.preventDefault()}else if(e.key=='Escape')close()});
+ list.addEventListener('mousedown',e=>e.preventDefault());
+ list.addEventListener('click',e=>{const o=e.target.closest('.opt[data-i]');if(o)pick(items[+o.dataset.i][0])});
+ inp.addEventListener('blur',()=>{setTimeout(close,120);if(inp.value!=sel[k])inp.value=sel[k]});
+ box.querySelector('.clr').onclick=()=>{sel[k]='';inp.value='';render();inp.focus()};}
+$('#swap').onclick=()=>{sel={a:sel.b,b:sel.a};$('#ia').value=sel.a;$('#ib').value=sel.b;render()};
+for(const id of['#fcomp','#ffrom','#fto'])$(id).onchange=()=>render(true);
+function matches(){return data[cat].rows.filter(r=>(r.h==sel.a&&r.a==sel.b)||(r.h==sel.b&&r.a==sel.a))}
+function fillFilters(ms){const comps=[...new Set(ms.map(r=>r.c))].sort((a,b)=>a.localeCompare(b,'es'));const ss=[...new Set(ms.map(r=>r.s))].sort((a,b)=>a-b);
+ const pc=$('#fcomp').value,pf=$('#ffrom').value,pt=$('#fto').value;
+ $('#fcomp').innerHTML='<option value="">Todas</option>'+comps.map(c=>`<option>${esc(c)}</option>`).join('');
+ $('#ffrom').innerHTML=ss.map(s=>`<option value="${s}">T${s}</option>`).join('');$('#fto').innerHTML=$('#ffrom').innerHTML;
+ if(comps.includes(pc))$('#fcomp').value=pc;$('#ffrom').value=ss.includes(+pf)?pf:ss[0]??'';$('#fto').value=ss.includes(+pt)?pt:ss[ss.length-1]??'';}
+let lastPair='';
+function render(fromFilter){const out=$('#out');
+ if(!sel.a||!sel.b){$('#fcomp').innerHTML='<option>Todas</option>';$('#ffrom').innerHTML=$('#fto').innerHTML='<option>—</option>';out.innerHTML=`<p class="empty">Elige dos ${cat=='SELECCIONES'?'selecciones':'equipos'} para ver su historial.<br><small>Al elegir el primero, el segundo selector solo muestra rivales con los que se ha enfrentado.</small></p>`;return}
+ let ms=matches();const pair=sel.a+'|'+sel.b+'|'+cat;if(!fromFilter){if(pair!=lastPair){$('#fcomp').value='';$('#ffrom').value='';$('#fto').value=''}fillFilters(ms)}lastPair=pair;
+ const fc=$('#fcomp').value,f1=+$('#ffrom').value||0,f2=+$('#fto').value||99;
+ ms=ms.filter(r=>(!fc||r.c==fc)&&r.s>=f1&&r.s<=f2).sort((x,y)=>x.s-y.s);
+ let wa=0,wb=0,d=0,ga=0,gb=0;const A=sel.a;
+ for(const r of ms){const ah=r.h==A;const oa=ah?r.oh:r.oa,ob=ah?r.oa:r.oh;ga+=ah?r.hg:r.ag;gb+=ah?r.ag:r.hg;r.res=oa>ob?'a':oa<ob?'b':'d';r.res=='a'?wa++:r.res=='b'?wb++:d++}
+ const n=ms.length,p=x=>n?(x/n*100).toFixed(1):0;
+ let h=`<div class="sum"><div class="team a">${esc(sel.a)}</div><div class="played"><b>${n}</b>partidos</div><div class="team b">${esc(sel.b)}</div></div>
+ <div class="stats"><div class="st a"><b>${wa}</b><span>Victorias</span></div><div class="st d"><b>${d}</b><span>Empates</span></div><div class="st b"><b>${wb}</b><span>Victorias</span></div></div>
+ <div class="bar" aria-hidden="true"><i style="width:${p(wa)}%;background:var(--a)"></i><i style="width:${p(d)}%;background:var(--d)"></i><i style="width:${p(wb)}%;background:var(--b)"></i></div>
+ <div class="goals"><span>Goles: <b>${ga}</b></span><span>${n?((ga+gb)/n).toFixed(2):0} goles/partido</span><span>Goles: <b>${gb}</b></span></div>`;
+ if(!n)h+='<p class="empty">No hay partidos con estos filtros.</p>';
+ let cur=null;for(const r of ms){if(r.s!==cur){if(cur!==null)h+='</div>';cur=r.s;h+=`<div class="season"><h3>TEMPORADA ${r.s}</h3>`}
+  const wh=r.oh>r.oa,wa_=r.oa>r.oh;const cls=r.res=='a'?'wa':r.res=='b'?'wb':'';
+  const tags=r.n?r.n.split(';').map(t=>t.trim()).filter(Boolean).map(t=>`<span class="tag ${/sanci/.test(t)?'s':/penal/.test(t)?'p':''}">${esc(t)}</span>`).join(''):'';
+  h+=`<div class="m ${cls}"><div class="h ${wh?'w':''}">${esc(r.h)}</div><div class="sc">${r.hg} – ${r.ag}</div><div class="${wa_?'w':''}">${esc(r.a)}</div><div class="meta"><span>${esc(r.c)}</span><span>· ${esc(r.r)}</span>${tags}</div></div>`}
+ if(cur!==null)h+='</div>';out.innerHTML=h}
+fetch(DB).then(r=>{if(!r.ok)throw r.status;return r.text()}).then(t=>{parse(t);tabs();setupCombo('a');setupCombo('b');
+ const u=new URLSearchParams(location.search);if(u.get('cat')&&data[u.get('cat')])cat=u.get('cat'),tabs();for(const k of['a','b'])if(u.get(k)&&data[cat].teams.has(u.get(k))){sel[k]=u.get(k);$('#i'+k).value=sel[k]}
+ render()}).catch(e=>$('#out').innerHTML='<p class="empty">No se pudo cargar la base de datos ('+e+').</p>');
+</script>
+</body>
+</html>
