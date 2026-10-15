@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b1220">
-<title>Cara a cara TSM · Historial de enfrentamientos</title>
+<title>Historial de enfrentamientos</title>
 <style>
 :root{--bg:#0b1220;--card:#121a2b;--card2:#18223a;--line:#24304d;--tx:#e8edf7;--mut:#93a0bb;--a:#3b82f6;--b:#f43f5e;--d:#a3a3a3;--acc:#22d3ee;--r:14px}
 *{box-sizing:border-box}
@@ -15,9 +15,12 @@ h1 span{color:var(--acc)}
 .sub{color:var(--mut);margin:4px 0 0;font-size:.95rem}
 main{max-width:1100px;margin:auto;padding:8px 16px 40px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-top:14px}
+.tabbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .tabs{display:flex;gap:6px;flex-wrap:wrap}
 .tab{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--tx);font-size:.95rem;cursor:pointer}
 .tab[aria-pressed=true]{background:var(--acc);color:#05202a;border-color:var(--acc);font-weight:600}
+.reset{min-height:44px;margin-left:auto;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--tx);font-size:.9rem;cursor:pointer;transition:.15s}
+.reset:hover{border-color:var(--acc);color:var(--acc)}
 .pick{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:end;margin-top:14px}
 .vs{font-weight:800;color:var(--mut);padding-bottom:12px;text-align:center}
 label{display:block;font-size:.8rem;color:var(--mut);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em}
@@ -50,7 +53,7 @@ select{width:100%;min-height:48px;padding:0 12px;border-radius:12px;border:1px s
 .goals{display:flex;justify-content:space-between;color:var(--mut);margin-top:10px;font-size:.9rem;flex-wrap:wrap;gap:6px}
 .goals b{color:var(--tx)}
 .season{margin-top:18px}
-.season h3{margin:0 0 8px;font-size:.85rem;color:var(--acc);letter-spacing:.08em}
+.season h3{margin:0 0 8px;font-size:.85rem;color:var(--acc);letter-spacing:.08em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .m{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--card2);margin-bottom:8px;border-left:4px solid var(--d)}
 .m.wa{border-left-color:var(--a)}.m.wb{border-left-color:var(--b)}
 .m .h{text-align:right}.m .w{font-weight:700}
@@ -61,23 +64,101 @@ select{width:100%;min-height:48px;padding:0 12px;border-radius:12px;border:1px s
 footer{color:var(--mut);font-size:.8rem;max-width:1100px;margin:auto;padding:0 16px 30px}
 footer a{color:var(--acc)}
 .load{color:var(--mut)}
+
+/* ---- Scrollbars modernos ---- */
+html{scrollbar-width:thin;scrollbar-color:rgba(34,211,238,.55) transparent}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(147,160,187,.25);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:rgba(34,211,238,.6)}
+.list{scrollbar-width:thin;scrollbar-color:rgba(34,211,238,.55) transparent}
+.list::-webkit-scrollbar{width:8px}
+.list::-webkit-scrollbar-track{background:transparent}
+.list::-webkit-scrollbar-thumb{background:linear-gradient(180deg,rgba(34,211,238,.7),rgba(59,130,246,.7));border-radius:99px}
+.list::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#22d3ee,#3b82f6)}
+select{scrollbar-width:thin;scrollbar-color:rgba(34,211,238,.55) transparent}
+select::-webkit-scrollbar{width:10px}
+select::-webkit-scrollbar-track{background:#0f1726;border-radius:8px}
+select::-webkit-scrollbar-thumb{background:linear-gradient(180deg,rgba(34,211,238,.7),rgba(59,130,246,.7));border-radius:8px}
+select::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#22d3ee,#3b82f6)}
+
+/* ---- Estadísticas globales ---- */
+.gstats{display:flex;justify-content:center;gap:26px;flex-wrap:wrap;margin-top:12px;font-size:.88rem;color:var(--mut)}
+.gstats b{color:var(--acc);font-weight:600}
+
+/* ---- Escudos ---- */
+.badge{width:22px;height:22px;object-fit:contain;flex:0 0 auto}
+.team .badge{width:24px;height:24px;vertical-align:-5px;margin:0 6px}
+.m .badge{width:18px;height:18px;vertical-align:-4px;margin:0 5px}
+
+/* ---- Clasificación ---- */
+.tablewrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:.88rem}
+.tbl th{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);font-weight:600}
+.tbl td{padding:8px;border-bottom:1px solid #1b2540}
+.tbl tr:last-child td{border-bottom:0}
+.tbl .tn{display:flex;align-items:center;gap:8px;font-weight:600}
+.tbl .pts{font-weight:700;color:var(--acc)}
+
+/* ---- Checkbox circular "Ignorar sanciones" ---- */
+.chk{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:400;letter-spacing:.04em;color:var(--mut);cursor:pointer;text-transform:none;user-select:none;margin:0}
+.chk:hover{color:var(--tx)}
+.chk input[type=checkbox]{
+  appearance:none;-webkit-appearance:none;margin:0;
+  width:18px;height:18px;border-radius:50%;
+  border:2px solid var(--line);background:var(--card2);
+  cursor:pointer;position:relative;transition:.15s;flex:0 0 auto;
+}
+.chk input[type=checkbox]:hover{border-color:var(--acc)}
+.chk input[type=checkbox]:checked{background:var(--acc);border-color:var(--acc)}
+.chk input[type=checkbox]:checked::after{
+  content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:6px;height:6px;border-radius:50%;background:#05202a;
+}
+.chk input[type=checkbox]:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+
+/* ---- Estadísticas avanzadas + gráfico ---- */
+.adv{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.panel{background:var(--card2);border-radius:12px;padding:14px}
+.panel h4{margin:0 0 10px;font-size:.76rem;letter-spacing:.08em;color:var(--acc);text-transform:uppercase}
+.row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.88rem}
+.row:last-child{border-bottom:0}
+.row span:first-child{color:var(--mut)}
+.row b{color:var(--tx);text-align:right}
+.chartbox{max-width:270px;margin:0 auto}
+
+/* ---- Botones de scroll ---- */
+.scrolls{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:50}
+.scrolls button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card2);color:var(--acc);font-size:1.1rem;cursor:pointer;box-shadow:0 6px 18px #0008;transition:.15s}
+.scrolls button:hover{border-color:var(--acc);transform:scale(1.08)}
+
 @media (max-width:640px){
  .pick{grid-template-columns:1fr;gap:8px}.vs{display:none}
  .swapw{display:flex;justify-content:center}
  .filters{grid-template-columns:1fr 1fr}.filters .fc{grid-column:1/-1}
  .stats{gap:6px}.st{padding:10px 4px}
  .m{grid-template-columns:1fr auto 1fr;padding:10px 8px;font-size:.92rem}
+ .adv{grid-template-columns:1fr}
+ .gstats{gap:14px;font-size:.82rem}
 }
 </style>
 </head>
 <body>
 <header>
- <h1>Cara a cara <span>TSM</span></h1>
- <p class="sub">Historial de enfrentamientos oficiales · Temporadas T1–T37</p>
+ <h1>Historial de <span>enfrentamientos</span></h1>
+ <p class="sub">Enfrentamientos oficiales · Temporadas T1–T37</p>
+ <div class="gstats">
+  <div>Partidos registrados: <b id="gMatches">—</b></div>
+  <div>Goles totales: <b id="gGoals">—</b></div>
+  <div>Goles por partido: <b id="gAvg">—</b></div>
+ </div>
 </header>
 <main>
  <section class="card">
-  <div class="tabs" role="group" aria-label="Categoría" id="tabs"></div>
+  <div class="tabbar">
+   <div class="tabs" role="group" aria-label="Categoría" id="tabs"></div>
+   <button class="reset" id="reset" title="Reiniciar selección">↺ Reiniciar</button>
+  </div>
   <div class="pick">
    <div><label for="ia">Equipo 1</label><div class="combo a" id="ca"><input id="ia" autocomplete="off" placeholder="Buscar equipo…" role="combobox" aria-expanded="false"><button class="clr" aria-label="Borrar" data-c="a">×</button><div class="list" role="listbox"></div></div></div>
    <div class="swapw"><button class="swap" id="swap" aria-label="Intercambiar equipos" title="Intercambiar">⇄</button></div>
@@ -91,18 +172,27 @@ footer a{color:var(--acc)}
  </section>
  <section class="card" id="out"><p class="empty load">Cargando base de datos…</p></section>
 </main>
-<footer>Datos: <a href="https://alantsm.github.io/Headtoheadrecorddb/results.txt">Headtoheadrecorddb</a>. Amistosos excluidos. Victoria/derrota según el resultado oficial: las sanciones por táctica T (3-0, solo desde T25; sin sanción si ambos usaron táctica T) cuentan para el ganador; los goles mostrados son los del partido jugado. Las eliminatorias decididas por penaltis cuentan como empate (se indica el resultado de la tanda).</footer>
+<footer>Datos: <a href="https://alantsm.github.io/Headtoheadrecorddb/results.txt">Headtoheadrecorddb</a>. Amistosos excluidos (a excepción del popular "Trofeo D.A. Maradona". Victoria/derrota según el resultado oficial: las sanciones por táctica T (3-0, solo desde T25; sin sanción si ambos usaron táctica T) cuentan para el ganador; los goles mostrados son los del partido jugado. Las eliminatorias decididas por penaltis cuentan como empate (se indica el resultado de la tanda).</footer>
+<div class="scrolls">
+ <button id="toTop" aria-label="Ir arriba" title="Ir arriba">↑</button>
+ <button id="toBottom" aria-label="Ir abajo" title="Ir abajo">↓</button>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 const DB='https://alantsm.github.io/Headtoheadrecorddb/results.txt';
+const BADGE_DB='https://www.tusoccermanager.com/h63-teambadgedb-html';
+const DEFAULT_BADGE='https://2img.net/i.imgur.com/nAf88hk.png';
 const CATS=[['CLUBES','Clubes'],['SELECCIONES','Selecciones'],['FILIALES','Filiales'],['FEMENINO','Femenino']];
-let data={},cat='CLUBES',sel={a:'',b:''};
+let data={},cat='CLUBES',sel={a:'',b:''},teamBadges={},badgeNorm={},chartInstance=null,lastPair='',ignoreSanc=false;
 const $=s=>document.querySelector(s);
+const norm=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function badgeFor(t){return teamBadges[t]||badgeNorm[norm(t)]||DEFAULT_BADGE}
 function parseLine(l){const o=[];let c='',q=false;for(let i=0;i<l.length;i++){const ch=l[i];if(q){if(ch=='"'){if(l[i+1]=='"'){c+='"';i++}else q=false}else c+=ch}else if(ch=='"')q=true;else if(ch==','){o.push(c);c=''}else c+=ch}o.push(c);return o}
 function parse(t){let sec=null;for(const l of t.split('\n')){if(!l||l[0]=='#'&&l[1]!='#')continue;if(l.startsWith('## ')){sec=l.slice(3).split(' (')[0];data[sec]={rows:[],teams:new Map()};continue}if(!sec||l.startsWith('Temporada,'))continue;const f=parseLine(l);if(f.length<7)continue;const r={s:+f[0].slice(1),c:f[1],r:f[2],h:f[3],hg:+f[4],ag:+f[5],a:f[6],n:f[7]||''};const sx=r.n.match(/oficial (\d+)-(\d+)/);r.oh=sx?+sx[1]:r.hg;r.oa=sx?+sx[2]:r.ag;data[sec].rows.push(r);for(const t of[r.h,r.a])data[sec].teams.set(t,(data[sec].teams.get(t)||0)+1)}}
-const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function tabs(){$('#tabs').innerHTML=CATS.filter(c=>data[c[0]]).map(([k,n])=>`<button class="tab" aria-pressed="${k==cat}" data-k="${k}">${n} <small>(${data[k].teams.size})</small></button>`).join('');}
-$('#tabs').onclick=e=>{const b=e.target.closest('.tab');if(!b)return;cat=b.dataset.k;sel={a:'',b:''};$('#ia').value=$('#ib').value='';tabs();render()};
+$('#tabs').onclick=e=>{const b=e.target.closest('.tab');if(!b)return;cat=b.dataset.k;sel={a:'',b:''};$('#ia').value=$('#ib').value='';lastPair='';tabs();render()};
+$('#reset').onclick=()=>{sel={a:'',b:''};$('#ia').value='';$('#ib').value='';lastPair='';$('#fcomp').value='';render()};
 function opponents(t){const m=new Map();for(const r of data[cat].rows){if(r.h==t)m.set(r.a,(m.get(r.a)||0)+1);else if(r.a==t)m.set(r.h,(m.get(r.h)||0)+1)}return m}
 function setupCombo(k){const box=$('#c'+k),inp=box.querySelector('input'),list=box.querySelector('.list');let hl=-1,items=[];
  function show(){const other=sel[k=='a'?'b':'a'];const src=other?opponents(other):data[cat].teams;const q=norm(inp.value.trim());
@@ -125,26 +215,112 @@ function fillFilters(ms){const comps=[...new Set(ms.map(r=>r.c))].sort((a,b)=>a.
  $('#fcomp').innerHTML='<option value="">Todas</option>'+comps.map(c=>`<option>${esc(c)}</option>`).join('');
  $('#ffrom').innerHTML=ss.map(s=>`<option value="${s}">T${s}</option>`).join('');$('#fto').innerHTML=$('#ffrom').innerHTML;
  if(comps.includes(pc))$('#fcomp').value=pc;$('#ffrom').value=ss.includes(+pf)?pf:ss[0]??'';$('#fto').value=ss.includes(+pt)?pt:ss[ss.length-1]??'';}
-let lastPair='';
+function updateGlobalStats(){let n=0,g=0;for(const k in data)for(const r of data[k].rows){n++;g+=r.hg+r.ag}
+ $('#gMatches').textContent=n.toLocaleString('es-ES');$('#gGoals').textContent=g.toLocaleString('es-ES');$('#gAvg').textContent=n?(g/n).toFixed(2):'0.00';}
+function drawChart(wa,d,wb,A,B){const c=document.getElementById('chart');if(!c||typeof Chart==='undefined')return;
+ if(chartInstance){chartInstance.destroy();chartInstance=null}
+ chartInstance=new Chart(c,{type:'doughnut',data:{labels:[A,'Empates',B],datasets:[{data:[wa,d,wb],backgroundColor:['#3b82f6','#a3a3a3','#f43f5e'],borderColor:'#18223a',borderWidth:2}]},
+  options:{responsive:true,maintainAspectRatio:true,cutout:'58%',plugins:{legend:{position:'bottom',labels:{color:'#e8edf7',font:{family:'system-ui',size:11},padding:10,boxWidth:12}}}}})}
 function render(fromFilter){const out=$('#out');
- if(!sel.a||!sel.b){$('#fcomp').innerHTML='<option>Todas</option>';$('#ffrom').innerHTML=$('#fto').innerHTML='<option>—</option>';out.innerHTML=`<p class="empty">Elige dos ${cat=='SELECCIONES'?'selecciones':'equipos'} para ver su historial.<br><small>Al elegir el primero, el segundo selector solo muestra rivales con los que se ha enfrentado.</small></p>`;return}
+ if(!sel.a||!sel.b){$('#fcomp').innerHTML='<option>Todas</option>';$('#ffrom').innerHTML=$('#fto').innerHTML='<option>—</option>';
+  out.innerHTML=`<p class="empty">Elige dos ${cat=='SELECCIONES'?'selecciones':'equipos'} para ver su historial.<br><small>Al elegir el primero, el segundo selector solo muestra rivales con los que se ha enfrentado.</small></p>`;
+  if(chartInstance){chartInstance.destroy();chartInstance=null}return}
  let ms=matches();const pair=sel.a+'|'+sel.b+'|'+cat;if(!fromFilter){if(pair!=lastPair){$('#fcomp').value='';$('#ffrom').value='';$('#fto').value=''}fillFilters(ms)}lastPair=pair;
  const fc=$('#fcomp').value,f1=+$('#ffrom').value||0,f2=+$('#fto').value||99;
- ms=ms.filter(r=>(!fc||r.c==fc)&&r.s>=f1&&r.s<=f2).sort((x,y)=>x.s-y.s);
- let wa=0,wb=0,d=0,ga=0,gb=0;const A=sel.a;
- for(const r of ms){const ah=r.h==A;const oa=ah?r.oh:r.oa,ob=ah?r.oa:r.oh;ga+=ah?r.hg:r.ag;gb+=ah?r.ag:r.hg;r.res=oa>ob?'a':oa<ob?'b':'d';r.res=='a'?wa++:r.res=='b'?wb++:d++}
+ /* Orden: temporada descendente (más recientes primero) manteniendo orden original dentro de cada temporada */
+ ms=ms.filter(r=>(!fc||r.c==fc)&&r.s>=f1&&r.s<=f2).sort((x,y)=>y.s-x.s);
+
+ const A=sel.a,B=sel.b;
+ let wa=0,wb=0,d=0,ga=0,gb=0;
+ const stA={pj:0,g:0,e:0,p:0,gf:0,gc:0,pts:0},stB={pj:0,g:0,e:0,p:0,gf:0,gc:0,pts:0};
+ const freq=new Map();let maxTot=-1,mostGoals='—',bigA=0,bigATxt='—',bigB=0,bigBTxt='—';
+ for(const r of ms){
+  const ah=r.h==A;
+  const aG=ah?r.hg:r.ag, bG=ah?r.ag:r.hg;      // goles del campo
+  const oa=ah?r.oh:r.oa, ob=ah?r.oa:r.oh;      // resultado oficial
+  ga+=aG;gb+=bG;
+  /* Si ignoreSanc, se usa el resultado del campo (aG/bG); si no, el oficial (oa/ob) */
+  const v1=ignoreSanc?aG:oa, v2=ignoreSanc?bG:ob;
+  r.res=v1>v2?'a':v1<v2?'b':'d';
+  if(r.res=='a'){wa++;stA.g++;stA.pts+=3;stB.p++}else if(r.res=='b'){wb++;stB.g++;stB.pts+=3;stA.p++}else{d++;stA.e++;stB.e++;stA.pts++;stB.pts++}
+  stA.pj++;stB.pj++;stA.gf+=aG;stA.gc+=bG;stB.gf+=bG;stB.gc+=aG;
+  const tot=r.hg+r.ag;if(tot>maxTot){maxTot=tot;mostGoals=`${r.hg}-${r.ag} · T${r.s}`}
+  const key=`${aG}-${bG}`;freq.set(key,(freq.get(key)||0)+1);
+  if(aG-bG>bigA){bigA=aG-bG;bigATxt=`${aG}-${bG} · T${r.s}`}
+  if(bG-aG>bigB){bigB=bG-aG;bigBTxt=`${bG}-${aG} · T${r.s}`}}
+ let freqTxt='—',freqMax=0;for(const[k,v]of freq)if(v>freqMax){freqMax=v;freqTxt=`${k} (${v}×)`}
+
  const n=ms.length,p=x=>n?(x/n*100).toFixed(1):0;
- let h=`<div class="sum"><div class="team a">${esc(sel.a)}</div><div class="played"><b>${n}</b>partidos</div><div class="team b">${esc(sel.b)}</div></div>
+ let h=`<div class="sum">
+  <div class="team a"><img class="badge" src="${badgeFor(A)}" alt="" onerror="this.style.visibility='hidden'">${esc(A)}</div>
+  <div class="played"><b>${n}</b>partidos</div>
+  <div class="team b">${esc(B)}<img class="badge" src="${badgeFor(B)}" alt="" onerror="this.style.visibility='hidden'"></div>
+ </div>
  <div class="stats"><div class="st a"><b>${wa}</b><span>Victorias</span></div><div class="st d"><b>${d}</b><span>Empates</span></div><div class="st b"><b>${wb}</b><span>Victorias</span></div></div>
  <div class="bar" aria-hidden="true"><i style="width:${p(wa)}%;background:var(--a)"></i><i style="width:${p(d)}%;background:var(--d)"></i><i style="width:${p(wb)}%;background:var(--b)"></i></div>
  <div class="goals"><span>Goles: <b>${ga}</b></span><span>${n?((ga+gb)/n).toFixed(2):0} goles/partido</span><span>Goles: <b>${gb}</b></span></div>`;
- if(!n)h+='<p class="empty">No hay partidos con estos filtros.</p>';
- let cur=null;for(const r of ms){if(r.s!==cur){if(cur!==null)h+='</div>';cur=r.s;h+=`<div class="season"><h3>TEMPORADA ${r.s}</h3>`}
+
+ if(!n){h+='<p class="empty">No hay partidos con estos filtros.</p>';out.innerHTML=h;if(chartInstance){chartInstance.destroy();chartInstance=null}return}
+
+ const rows=[[A,stA],[B,stB]].sort((x,y)=>y[1].pts-x[1].pts||((y[1].gf-y[1].gc)-(x[1].gf-x[1].gc))||(y[1].gf-x[1].gf));
+ h+=`<div class="season"><h3>CLASIFICACIÓN ENTRE AMBOS <label class="chk" title="Contar solo el resultado del campo (ignorar sanciones)"><input type="checkbox" id="ignoreSanc" ${ignoreSanc?'checked':''}><span>Ignorar sanciones</span></label></h3><div class="tablewrap"><table class="tbl">
+  <thead><tr><th>#</th><th>Equipo</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GC</th><th>DG</th><th>Pts</th></tr></thead>
+  <tbody>${rows.map(([t,s],i)=>{const dg=s.gf-s.gc;return `<tr>
+   <td>${i+1}</td>
+   <td><div class="tn"><img class="badge" src="${badgeFor(t)}" alt="" onerror="this.style.visibility='hidden'">${esc(t)}</div></td>
+   <td>${s.pj}</td><td>${s.g}</td><td>${s.e}</td><td>${s.p}</td><td>${s.gf}</td><td>${s.gc}</td><td>${dg>0?'+':''}${dg}</td><td class="pts">${s.pts}</td></tr>`}).join('')}</tbody>
+ </table></div></div>`;
+
+ h+=`<div class="adv">
+  <div class="panel"><h4>Estadísticas avanzadas</h4>
+   <div class="row"><span>Partido con más goles</span><b>${mostGoals}</b></div>
+   <div class="row"><span>Resultado más repetido</span><b>${freqTxt}</b></div>
+   <div class="row"><span>Mayor goleada de ${esc(A)}</span><b>${bigATxt}</b></div>
+   <div class="row"><span>Mayor goleada de ${esc(B)}</span><b>${bigBTxt}</b></div>
+   <div class="row"><span>Goles por partido</span><b>${((ga+gb)/n).toFixed(2)}</b></div>
+  </div>
+  <div class="panel"><h4>Distribución de resultados</h4><div class="chartbox"><canvas id="chart"></canvas></div></div>
+ </div>`;
+
+ let cur=null;
+ for(const r of ms){
+  if(r.s!==cur){if(cur!==null)h+='</div>';cur=r.s;h+=`<div class="season"><h3>TEMPORADA ${r.s}</h3>`}
   const wh=r.oh>r.oa,wa_=r.oa>r.oh;const cls=r.res=='a'?'wa':r.res=='b'?'wb':'';
   const tags=r.n?r.n.split(';').map(t=>t.trim()).filter(Boolean).map(t=>`<span class="tag ${/sanci/.test(t)?'s':/penal/.test(t)?'p':''}">${esc(t)}</span>`).join(''):'';
-  h+=`<div class="m ${cls}"><div class="h ${wh?'w':''}">${esc(r.h)}</div><div class="sc">${r.hg} – ${r.ag}</div><div class="${wa_?'w':''}">${esc(r.a)}</div><div class="meta"><span>${esc(r.c)}</span><span>· ${esc(r.r)}</span>${tags}</div></div>`}
- if(cur!==null)h+='</div>';out.innerHTML=h}
-fetch(DB).then(r=>{if(!r.ok)throw r.status;return r.text()}).then(t=>{parse(t);tabs();setupCombo('a');setupCombo('b');
+  h+=`<div class="m ${cls}">
+   <div class="h ${wh?'w':''}">${esc(r.h)}<img class="badge" src="${badgeFor(r.h)}" alt="" onerror="this.style.visibility='hidden'"></div>
+   <div class="sc">${r.hg} – ${r.ag}</div>
+   <div class="${wa_?'w':''}"><img class="badge" src="${badgeFor(r.a)}" alt="" onerror="this.style.visibility='hidden'">${esc(r.a)}</div>
+   <div class="meta"><span>${esc(r.c)}</span><span>· ${esc(r.r)}</span>${tags}</div>
+  </div>`}
+ if(cur!==null)h+='</div>';
+ out.innerHTML=h;
+ drawChart(wa,d,wb,A,B)}
+
+/* Delegación: cambio en el checkbox "Ignorar sanciones" */
+$('#out').addEventListener('change',e=>{
+ if(e.target && e.target.id==='ignoreSanc'){
+  ignoreSanc=e.target.checked;
+  render(true);
+ }
+});
+
+/* Botones de scroll */
+$('#toTop').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
+$('#toBottom').onclick=()=>window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+
+/* Escudos */
+fetch(BADGE_DB).then(r=>r.ok?r.text():'').then(html=>{
+ if(!html)return;
+ const doc=new DOMParser().parseFromString(html,'text/html');
+ doc.querySelectorAll('#shields-list li').forEach(li=>{
+  const m=li.textContent.trim().match(/^(.+?):\s*(.+)$/);
+  if(m){const name=m[1].trim(),url=m[2].trim();teamBadges[name]=url;badgeNorm[norm(name)]=url}});
+ if(sel.a||sel.b)render();
+}).catch(()=>{});
+
+/* Datos */
+fetch(DB).then(r=>{if(!r.ok)throw r.status;return r.text()}).then(t=>{parse(t);tabs();updateGlobalStats();setupCombo('a');setupCombo('b');
  const u=new URLSearchParams(location.search);if(u.get('cat')&&data[u.get('cat')])cat=u.get('cat'),tabs();for(const k of['a','b'])if(u.get(k)&&data[cat].teams.has(u.get(k))){sel[k]=u.get(k);$('#i'+k).value=sel[k]}
  render()}).catch(e=>$('#out').innerHTML='<p class="empty">No se pudo cargar la base de datos ('+e+').</p>');
 </script>
